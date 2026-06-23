@@ -1,5 +1,5 @@
 
-import { CreateProductType, ProductResponse, ProductType } from '@/lib/products';
+import { CreateProductType, ProductResponse, ProductType, UpdateProductType } from '@/lib/products';
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 
 
@@ -19,21 +19,46 @@ export const ecommerceApi= createApi({
     }),
     // create Product
     createProduct : builder.mutation<CreateProductType,unknown,unknown>({
-      query: (newProduct:CreateProductType)=> ({
+      query: ({newProduct, accessToken})=> ({
          url: `/products`,
          method: 'POST',
          headers: {
           'content-type': 'application/json',
-          'authentication': `bearer ${process.env.ACCESS_TOEKN}`
+          'authorization': `bearer ${accessToken}`
          },
          body: newProduct
       })
+    }),
+    updateProductbyUUID: builder.mutation<UpdateProductType, unknown>({
+      query:({updateProduct, uuid, accessToken}) => ({
+        url: `/products${uuid}`,
+         method: 'PUT',
+         headers: {
+          'content-type': 'application/json',
+          'authorization': `bearer ${accessToken}`
+         },
+         body: updateProduct
+      })
+    }),
+
+    deleteProductByUUID: builder.mutation<string, unknown>({
+      query:({uuid, accessToken}) => ({
+        url: `/products${uuid}`,
+         method: 'DELETE',
+         headers: {
+          'content-type': 'application/json',
+          'authorization': `bearer ${accessToken}`
+         },
+      })
     })
+
   })
 })
 
 export const {
  useGetAllProductQuery,
  useGetProductByUuidQuery, 
- useCreateProductMutation
+ useCreateProductMutation,
+ useUpdateProductbyUUIDMutation,
+ useDeleteProductByUUIDMutation
 } = ecommerceApi;

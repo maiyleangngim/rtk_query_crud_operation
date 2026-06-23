@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -20,30 +20,84 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "../ui/input"
-import { DataTablePagination } from "../ui/data-pagination"
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu"
-import { DataTableFacetedFilter } from "../ui/command-range"
-
+import { Button } from "@/components/ui/button";
+import { Input } from "../ui/input";
+import { DataTablePagination } from "../ui/data-pagination";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { DataTableFacetedFilter } from "../ui/command-range";
+import { useCreateProductMutation } from "@/services/ecommerce";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
-
-
 
 export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [createNewProduct, { isLoading, error }] = useCreateProductMutation();
+  // mock data
+  const newProduct = {
+    name: "Dell XPS 15 9530",
+    description:
+      "Premium ultrabook with a stunning InfinityEdge display, ideal for creative professionals and power users on the go.",
+    computerSpec: {
+      processor: "Intel Core i7-13700H",
+      ram: "32GB DDR5",
+      storage: "1TB NVMe SSD",
+      gpu: "NVIDIA GeForce RTX 4050 6GB",
+      os: "Windows 11 Pro",
+      screenSize: "15.6-inch 3.5K OLED Touch",
+      battery: "86Wh, up to 13 hours",
+    },
+    stockQuantity: 24,
+    priceIn: 1450,
+    priceOut: 1899,
+    discount: 5,
+    color: [
+      {
+        color: "Platinum Silver",
+        images: [
+          "https://example.com/images/dell-xps-15/silver-1.jpg",
+          "https://example.com/images/dell-xps-15/silver-2.jpg",
+        ],
+      },
+      {
+        color: "Graphite Black",
+        images: [
+          "https://example.com/images/dell-xps-15/black-1.jpg",
+          "https://example.com/images/dell-xps-15/black-2.jpg",
+        ],
+      },
+    ],
+    thumbnail:
+      "https://i.pinimg.com/webp/736x/26/be/56/26be56634ad9773c9d8f6315cac2cba7.webp",
+    warranty: "2 years international warranty",
+    availability: true,
+    images: [
+      "https://example.com/images/dell-xps-15/main-1.jpg",
+      "https://example.com/images/dell-xps-15/main-2.jpg",
+      "https://example.com/images/dell-xps-15/main-3.jpg",
+    ],
+    categoryUuid: "462d9f60-8346-45ab-b8b3-a597d240965b",
+    supplierUuid: "a34496d2-370e-4332-8c6d-b4a6bc069bf1",
+    brandUuid: "8f2e3bcb-bb0b-45a1-b9bc-1d43f08f0ddb",
+  };
 
   const table = useReactTable({
     data,
@@ -62,8 +116,7 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
     },
-  })
-
+  });
 
   // Helper to get ALL unique values (not affected by current filters)
   const getFacetedOptions = (columnId: string) => {
@@ -90,6 +143,14 @@ export function DataTable<TData, TValue>({
       }));
   };
 
+  //handle create new product
+  const handleCreateNewProduct = () => {
+    createNewProduct({
+      newProduct: JSON.stringify(newProduct),
+      accessToken: process.env.NEXT_PUBLIC_ACCESS_TOKEN,
+    });
+  };
+
   return (
     <>
       <div>
@@ -97,7 +158,9 @@ export function DataTable<TData, TValue>({
           <div className="flex gap-4">
             <Input
               placeholder="Filter name..."
-              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              value={
+                (table.getColumn("name")?.getFilterValue() as string) ?? ""
+              }
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }
@@ -116,7 +179,6 @@ export function DataTable<TData, TValue>({
               title="Price"
               options={getFacetedOptions("priceOut")}
             />
-
           </div>
 
           <DropdownMenu>
@@ -125,6 +187,7 @@ export function DataTable<TData, TValue>({
                 View
               </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent align="end">
               {table
                 .getAllColumns()
@@ -134,13 +197,20 @@ export function DataTable<TData, TValue>({
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
                 ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* button create product */}
+          <Button onClick={() => handleCreateNewProduct()}>
+            Create Product
+          </Button>
         </div>
 
         <div className="overflow-hidden rounded-md border">
@@ -153,9 +223,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -170,14 +240,20 @@ export function DataTable<TData, TValue>({
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
                     No results.
                   </TableCell>
                 </TableRow>
@@ -191,5 +267,5 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </>
-  )
+  );
 }
