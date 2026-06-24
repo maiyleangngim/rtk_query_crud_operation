@@ -86,7 +86,7 @@ export function DataTable<TData, TValue>({
       },
     ],
     thumbnail:
-      "https://i.pinimg.com/webp/736x/26/be/56/26be56634ad9773c9d8f6315cac2cba7.webp",
+      "https://i.pinimg.com/webp/1200x/0f/95/5c/0f955c764f1cb2a1c16b12f1931e03fa.webp",
     warranty: "2 years international warranty",
     availability: true,
     images: [

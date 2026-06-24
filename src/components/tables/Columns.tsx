@@ -30,16 +30,6 @@ type ColumnsProps = {
   onDelete: (uuid: string) => void;
 };
 
-// // handle update product by uuid
-// const handleUpdateProductByUUID = ()=> {
-
-// }
-
-// // hadle delete product by uuid
-// const handleDeleteProductByUUID = ()=>{
-
-// }
-
 export const columns = ({
   onViewDetail,
   onUpdate,

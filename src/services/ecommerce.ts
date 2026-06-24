@@ -18,7 +18,7 @@ export const ecommerceApi= createApi({
       })
     }),
     // create Product
-    createProduct : builder.mutation<CreateProductType,unknown,unknown>({
+    createProduct : builder.mutation<CreateProductType,unknown>({
       query: ({newProduct, accessToken})=> ({
          url: `/products`,
          method: 'POST',

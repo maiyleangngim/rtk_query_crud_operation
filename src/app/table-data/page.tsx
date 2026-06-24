@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState } from "react";
 import { columns } from "@/components/tables/Columns";
@@ -13,7 +14,7 @@ import { toast } from "sonner";
 export default function DataTablePage() {
   const { data } = useGetAllProductQuery({
     page: 0,
-    size: 10,
+    size: 1000,
   });
   const tableData = Array.isArray(data?.content) ? data?.content : [];
 
