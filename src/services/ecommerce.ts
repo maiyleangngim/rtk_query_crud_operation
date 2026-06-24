@@ -31,7 +31,7 @@ export const ecommerceApi= createApi({
     }),
     updateProductbyUUID: builder.mutation<UpdateProductType, unknown>({
       query:({updateProduct, uuid, accessToken}) => ({
-        url: `/products${uuid}`,
+        url: `/products/${uuid}`,
          method: 'PUT',
          headers: {
           'content-type': 'application/json',
@@ -43,7 +43,7 @@ export const ecommerceApi= createApi({
 
     deleteProductByUUID: builder.mutation<string, unknown>({
       query:({uuid, accessToken}) => ({
-        url: `/products${uuid}`,
+        url: `/products/${uuid}`,
          method: 'DELETE',
          headers: {
           'content-type': 'application/json',

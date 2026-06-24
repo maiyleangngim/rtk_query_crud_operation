@@ -13,38 +13,50 @@ import { toast } from "sonner";
 export default function DataTablePage() {
   const { data } = useGetAllProductQuery({
     page: 0,
-    size: 10000,
+    size: 10,
   });
   const tableData = Array.isArray(data?.content) ? data?.content : [];
 
   const [selectedUuid, setSelectedUuid] = useState<string | null>(null);
 
   const updateProduct = {
-    name: "TechPro Quantum 15 Laptop",
+    name: "Docky",
     description:
-      "High-performance editing and gaming laptop with an aluminum chassis.",
-    stockQuantity: 45,
-    priceIn: 850.0,
-    priceOut: 1199.99,
-    discount: 10,
+      "Premium ultrabook with high performance, designed for developers and creative professionals.",
+    stockQuantity: 25,
+    priceIn: 1450,
+    priceOut: 1899,
+    discount: 5,
     color: [
       {
-        color: "Space Gray",
-        images: ["https://cheat.casa", "https://cheat.casa"],
+        color: "Platinum Silver",
+        images: [
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Spring_Boot.svg/1280px-Spring_Boot.svg.png",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Spring_Boot.svg/1280px-Spring_Boot.svg.png",
+        ],
       },
       {
-        color: "Matte Black",
-        images: ["https://cheat.casa"],
+        color: "Graphite Black",
+        images: [
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Spring_Boot.svg/1280px-Spring_Boot.svg.pngg",
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Spring_Boot.svg/1280px-Spring_Boot.svg.png",
+        ],
       },
     ],
-    thumbnail: "https://cheat.casa",
-    warranty: "2 Years Limited Manufacturer Warranty",
+    thumbnail:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Spring_Boot.svg/1280px-Spring_Boot.svg.png",
+    warranty: "2 years international warranty",
     availability: true,
-    images: ["https://cheat.casa", "https://cheat.casa"],
-    categoryUuid: "c3e1b4f6-8c2d-4e91-a1b2-c3d4e5f6a7b8",
-    supplierUuid: "fa18b9c2-3d4e-5f6a-7b8c-9d0e1f2a3b4c",
-    brandUuid: "b0f9e8d7-c6b5-a493-8271-615049382716",
+    images: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Spring_Boot.svg/1280px-Spring_Boot.svg.png",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Spring_Boot.svg/1280px-Spring_Boot.svg.png",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Spring_Boot.svg/1280px-Spring_Boot.svg.png",
+    ],
+    categoryUuid: "462d9f60-8346-45ab-b8b3-a597d240965b",
+    supplierUuid: "a34496d2-370e-4332-8c6d-b4a6bc069bf1",
+    brandUuid: " 8f2e3bcb-bb0b-45a1-b9bc-1d43f08f0ddb",
   };
+
   const [updateProductByUUID] = useUpdateProductbyUUIDMutation();
   const [deleteProductByUUID] = useDeleteProductByUUIDMutation();
 
