@@ -4,12 +4,12 @@ import { CreateProductForm } from "@/components/product-form/CreateProductForm";
 
 export default function Page() {
     return (
-        <div>
-            <h1>Upload Files</h1>
-            <UploadMultiple/>
+        <div className="container flex flex-col mx-auto max-w-xl py-10 gap-6">
+            <h1 className="font-bold text-5xl">This one for test just ignore it teacher </h1>
+            <UploadMultiple />
             <hr />
-            
-            <CreateProductForm/>
+            <h1 className="font-bold text-5xl">Upload Product:</h1>
+            <CreateProductForm />
         </div>
     );
 }

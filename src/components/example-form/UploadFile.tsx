@@ -89,48 +89,53 @@ export function FileUploadFillProgressDemo({ onUploadComplete }: FileUploadFillP
     // );
 
 
-    const onUpload = React.useCallback(
-        async (
-            files: File[],
-            {
-                onProgress,
-                onSuccess,
-                onError,
-            }: {
-                onProgress: (file: File, progress: number) => void;
-                onSuccess: (file: File) => void;
-                onError: (file: File, error: Error) => void;
-            },
-        ) => {
-            try {
-                const uploadedFiles = await uploadMutiFiles(files).unwrap();
-
-                console.log("Uploaded Files:", uploadedFiles);
-
-                uploadedFiles.forEach((item, index) => {
-                    onProgress(files[index], 100);
-                    onSuccess(files[index]);
-                });
-
-                // Send the first uploaded image URL back to React Hook Form
-                if (uploadedFiles.length > 0) {
-                    const firstUploaded = uploadedFiles.find(Boolean);
-
-                    if (firstUploaded?.location) {
-                        onUploadComplete?.(firstUploaded.location);
-                    }
-                }
-            } catch (error) {
-                files.forEach((file) => {
-                    onError(
-                        file,
-                        error instanceof Error ? error : new Error("Upload failed"),
-                    );
-                });
-            }
+const onUpload = React.useCallback(
+    async (
+        files: File[],
+        {
+            onProgress,
+            onSuccess,
+            onError,
+        }: {
+            onProgress: (file: File, progress: number) => void;
+            onSuccess: (file: File) => void;
+            onError: (file: File, error: Error) => void;
         },
-        [uploadMutiFiles, onUploadComplete],
-    );
+    ) => {
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const result = await uploadMutiFiles(files).unwrap()as any;
+
+            console.log("🟡 RAW result:", result);
+            console.log("🟡 isArray:", Array.isArray(result));
+
+            const location = Array.isArray(result)
+                ? result[0]?.location
+                : result?.location;
+
+            console.log("🟡 location:", location);
+
+            files.forEach((file) => {
+                onProgress(file, 100);
+                onSuccess(file);
+            });
+
+            if (location) {
+                console.log("✅ Calling onUploadComplete with:", location);
+                onUploadComplete?.(location);
+            } else {
+                console.warn("⚠️ No location found in response");
+            }
+
+        } catch (error) {
+            console.error("❌ Upload error:", error);
+            files.forEach((file) => {
+                onError(file, error instanceof Error ? error : new Error("Upload failed"));
+            });
+        }
+    },
+    [uploadMutiFiles, onUploadComplete],
+);
     const onFileReject = React.useCallback((file: File, message: string) => {
         toast(message, {
             description: `"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}" has been rejected`,

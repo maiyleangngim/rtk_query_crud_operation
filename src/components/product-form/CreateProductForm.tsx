@@ -24,6 +24,7 @@ import { ProductForm, productFormSchema } from "./product-form-schema";
 import { productFields } from "./product-form-fields";
 import { DynamicFormField } from "./fields/DynamicFormField";
 import { FileUploadFillProgressDemo } from "../example-form/UploadFile";
+import { useCreateProductMutation, useUpdateProductbyUUIDMutation } from "@/services/ecommerce";
 
 type ProductFormValue = z.infer<typeof productFormSchema>;
 
@@ -33,6 +34,8 @@ interface CreateProductFormProps {
 }
 
 export function CreateProductForm({ productData, isEditing }: CreateProductFormProps) {
+  const [updateProduct, { isLoading, error }] = useUpdateProductbyUUIDMutation();
+
   const form = useForm<ProductForm>({
     resolver: zodResolver(productFormSchema) as Resolver<ProductFormValue>,
     defaultValues: productData || {
@@ -53,17 +56,30 @@ export function CreateProductForm({ productData, isEditing }: CreateProductFormP
 
 
 
-  const onSubmit = (data: ProductForm) => {
-    console.log("Product Data:", data);
+const onSubmit = async (data: ProductForm) => {
+  console.log("Product Data:", data); // verify thumbnail is here
 
+  try {
     if (isEditing) {
-      // Call update API here - e.g., useUpdateProductMutation()
+      // update mutation here later
       toast.success("Product updated successfully!");
     } else {
-      // Call create API here
+      await updateProduct({
+        newProduct: JSON.stringify(data), //  replaces hardcoded newProduct
+        accessToken: process.env.NEXT_PUBLIC_ACCESS_TOKEN,
+      }).unwrap();
+
       toast.success("Product created successfully!");
+      form.reset();
     }
-  };
+  } catch (error) {
+    console.error(" Submit error:", error);
+    toast.error("Something went wrong!");
+  }
+};
+
+
+
   console.log("Form Values:", form.watch());
 
   console.log("Form: ", form.formState.errors);
@@ -101,7 +117,12 @@ export function CreateProductForm({ productData, isEditing }: CreateProductFormP
             render={({ field, fieldState }) => (
               <>
                 <FileUploadFillProgressDemo
-                  onUploadComplete={(url) => field.onChange(url)}
+                  onUploadComplete={(url) => {
+                    field.onChange(url); // 👈 sets thumbnail = 'https://api.escuelajs.co/...'
+                    console.log("Thumbnail set:", url); // verify it works
+                        console.log("✅ thumbnail in form:", form.getValues("thumbnail"));
+
+                  }}
                 />
 
 
@@ -130,7 +151,7 @@ export function CreateProductForm({ productData, isEditing }: CreateProductFormP
             Reset
           </Button>
 
-          <Button type="submit" form="product-form">
+          <Button type="submit" form="product-form" disabled={isLoading}>
             {isEditing ? "Update Product" : "Create Product"}
           </Button>
         </Field>
