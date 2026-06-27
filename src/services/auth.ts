@@ -1,3 +1,4 @@
+import { VerifyUserRequest, VerifyUserResponse } from "@/lib/verify";
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
@@ -42,12 +43,16 @@ const defaultRegisterAddress: AddresRequest = {
 }
 
 
+
+
+
 export const authApi = createApi({
     reducerPath: "authApi",
     baseQuery: fetchBaseQuery({
         baseUrl: `${process.env.NEXT_PUBLIC_ISHOP_BASE_URL}`,
     }),
     endpoints: (builder) => ({
+
         loginUser: builder.mutation<AuthResponse, UserLoginRequest>({
             query: ({ email, password }) => ({
                 url: `/auth/login`,
@@ -67,6 +72,15 @@ export const authApi = createApi({
                     address: body.address ?? defaultRegisterAddress,
                 }
             })
+        }),
+        verifyUser: builder.mutation<VerifyUserResponse, VerifyUserRequest>({
+            query: ({token}) => ({
+                url: `/users/verify-email`,
+                method: "POST",
+                body:{
+                    token
+                }
+            })
         })
     }),
 
@@ -74,5 +88,6 @@ export const authApi = createApi({
 
 export const {
     useLoginUserMutation,
-    useRegisterUserMutation
+    useRegisterUserMutation,
+    useVerifyUserMutation
 } = authApi

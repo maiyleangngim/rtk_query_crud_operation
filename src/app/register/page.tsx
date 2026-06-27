@@ -1,10 +1,11 @@
 
-import RegisterForm from '@/components/form/RegisterForm'
+import UploadComponent from '@/components/product-form/UrlComponent'
 
 export default function RegisterPage() {
   return (
     <div>
-        <RegisterForm/>
+        {/* <RegisterForm/> */}
+        <UploadComponent/>
     </div>
   )
 }

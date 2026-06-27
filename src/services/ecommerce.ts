@@ -11,6 +11,7 @@ export const ecommerceApi= createApi({
      getAllProduct: builder.query<ProductResponse,{page:number,size:number}>({
       query: ({page, size}) => `/products?page=${page}&size=${size}`
      }),
+     
     //  getProductByUUid
     getProductByUuid: builder.query<ProductType, string>({
       query: (uuid: string) => ({
