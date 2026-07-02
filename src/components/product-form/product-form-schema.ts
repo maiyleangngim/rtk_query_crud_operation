@@ -11,6 +11,12 @@ export const productFormSchema = z.object({
     .string()
     .min(20, "Description must be at least 20 characters.")
     .max(500, "Description must be at most 500 characters."),
+  computerSpec: z.object({
+    processor: z.string(),
+    ram: z.string(),
+    storage: z.string(),
+    gpu: z.string()
+  }),
 
   stockQuantity: z.number().int().min(0, "Stock quantity cannot be negative"),
   priceIn: z.number().min(0, "Price cannot be negative"),

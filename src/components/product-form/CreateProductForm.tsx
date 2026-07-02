@@ -34,13 +34,19 @@ interface CreateProductFormProps {
 }
 
 export function CreateProductForm({ productData, isEditing }: CreateProductFormProps) {
-  const [updateProduct, { isLoading, error }] = useUpdateProductbyUUIDMutation();
+  const [createProduct, { isLoading, error }] = useCreateProductMutation();
 
   const form = useForm<ProductForm>({
     resolver: zodResolver(productFormSchema) as Resolver<ProductFormValue>,
     defaultValues: productData || {
       name: "",
       description: "",
+      computerSpec: {
+        processor: "",
+        ram: "",
+        storage: "",
+        gpu: "",
+      },
       stockQuantity: 0,
       priceIn: 0,
       priceOut: 0,
@@ -56,27 +62,24 @@ export function CreateProductForm({ productData, isEditing }: CreateProductFormP
 
 
 
-const onSubmit = async (data: ProductForm) => {
-  console.log("Product Data:", data); // verify thumbnail is here
+  const onSubmit = async (data: ProductForm) => {
+    console.log("Product Data:", data); // verify thumbnail is here
 
-  try {
-    if (isEditing) {
-      // update mutation here later
-      toast.success("Product updated successfully!");
-    } else {
-      await updateProduct({
-        newProduct: JSON.stringify(data), //  replaces hardcoded newProduct
-        accessToken: process.env.NEXT_PUBLIC_ACCESS_TOKEN,
-      }).unwrap();
+    try {
+      
+        await createProduct({
+          newProduct: JSON.stringify(data), //  replaces hardcoded newProduct
+          accessToken: process.env.NEXT_PUBLIC_ACCESS_TOKEN,
+        }).unwrap();
 
-      toast.success("Product created successfully!");
-      form.reset();
+        toast.success("Product created successfully!");
+        // form.reset();
+      }
+    catch (error) {
+      console.error(" Submit error:", error);
+      toast.error("Something went wrong!");
     }
-  } catch (error) {
-    console.error(" Submit error:", error);
-    toast.error("Something went wrong!");
-  }
-};
+  };
 
 
 
@@ -98,7 +101,12 @@ const onSubmit = async (data: ProductForm) => {
       <CardContent>
         <form
           id="product-form"
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(
+    onSubmit,
+    (errors) => {
+        console.log("Validation errors:", errors);
+    }
+)}
           className="space-y-6"
         >
           {productFields.map((fieldConfig) => (
@@ -116,11 +124,14 @@ const onSubmit = async (data: ProductForm) => {
             control={form.control}
             render={({ field, fieldState }) => (
               <>
+
+                {/* it will return url after upload */}
                 <FileUploadFillProgressDemo
                   onUploadComplete={(url) => {
+                    // set the value of this field to the uploaded URL
                     field.onChange(url); // 👈 sets thumbnail = 'https://api.escuelajs.co/...'
                     console.log("Thumbnail set:", url); // verify it works
-                        console.log("✅ thumbnail in form:", form.getValues("thumbnail"));
+                    console.log("✅ thumbnail in form:", form.getValues("thumbnail"));
 
                   }}
                 />
